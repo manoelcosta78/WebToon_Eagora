@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webtoon Interativa - Niara</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .webtoon-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .mapped-area {
+            position: absolute;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s, transform 0.1s;
+            border: 2px solid transparent; 
+        }
+
+        /* MODO DE AJUSTE (DEBUG)
+           Se precisar ajustar a posição exata dos botões, remova os marcadores de comentário "/*" e "*/" 
+           da linha abaixo. Isso deixará as áreas clicáveis vermelhas para você visualizar onde estão.
+           Após ajustar no HTML, comente novamente para deixá-las invisíveis.
+        */
+        .mapped-area { border: 2px solid rgba(255,0,0,0.8); background-color: rgba(255,0,0,0.3); } 
+
+        .mapped-area:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 0, 0, 0.3);
+            transform: scale(1.02);
+        }
+        
+        .mapped-area:active {
+            background-color: rgba(0, 0, 0, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* Painéis */
+        .panel-view {
+            display: none;
+            width: 100%;
+            position: relative;
+        }
+
+        .panel-view.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tela de Créditos (agora separada da visibilidade do painel) */
+        .comic-bg {
+            background-color: #fdfbf7;
+            background-image: 
+                radial-gradient(#d4d4d4 15%, transparent 16%), 
+                radial-gradient(#d4d4d4 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .comic-box {
+            background: white;
+            border: 4px solid #000;
+            box-shadow: 8px 8px 0px #000;
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            transform: rotate(-1deg);
+            transition: transform 0.3s;
+        }
+
+        .comic-box:nth-child(even) {
+            transform: rotate(1deg);
+        }
+        
+        .comic-box:hover {
+            transform: scale(1.02) rotate(0deg);
+        }
+
+        .comic-title {
+            font-family: 'Bangers', display;
+            letter-spacing: 2px;
+            color: #ff3366;
+            text-shadow: 2px 2px 0px #000;
+            line-height: 1.1;
+        }
+
+        .btn-restart {
+            background-color: #ffcc00;
+            color: #000;
+            border: 4px solid #000;
+            box-shadow: 6px 6px 0px #000;
+            padding: 12px 35px;
+            font-size: 1.8rem;
+            font-family: 'Bangers', display;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+
+        .btn-restart:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px #000;
+            background-color: #ffdd33;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="webtoon-container" id="app">
+
+        <!-- PAINEL 00 - Início da História -->
+        <div id="panel00" class="panel-view active">
+            <img src="00.png" alt="História: Niara na praia." class="w-full h-auto block">
+            
+            <!-- ESCOLHA 1: Defender o menino (Retângulo Esquerdo) -->
+            <div class="mapped-area" 
+                 style="bottom: 1.5%; left: 3%; width: 29%; height: 11%;" 
+                 onclick="navigateTo('panel01')"
+                 title="Defender o menino">
+            </div>
+
+            <!-- ESCOLHA 2: Deixar pra lá (Retângulo Direito) -->
+            <div class="mapped-area" 
+                 style="bottom: 1.5%; right: 3%; width: 29%; height: 11%;" 
+                 onclick="navigateTo('panel02')"
+                 title="Deixar pra lá">
+            </div>
+        </div>
+
+        <!-- PAINEL 01 - Escolha de defender o menino -->
+        <div id="panel01" class="panel-view">
+            <img src="01.png" alt="Painel 01: Niara defende o menino." class="w-full h-auto block">
+            
+            <!-- ESCOLHA ÚNICA: FIM -->
+            <div class="mapped-area" 
+                 style="bottom: 5.3%; left: 18.1%; width: 35.7%; height: 2.5%;" 
+                 onclick="navigateTo('credits')"
+                 title="Fim">
+            </div>
+        </div>
+
+        <!-- PAINEL 02 - Escolha de deixar pra lá -->
+        <div id="panel02" class="panel-view">
+            <img src="02.png" alt="Painel 02: O menino vai embora triste." class="w-full h-auto block">
+            
+            <!-- ESCOLHA: SIM (Retângulo superior) -->
+            <div class="mapped-area" 
+                 style="bottom: 16.5%; left: 5%; width: 55%; height: 2.5%;" 
+                 onclick="navigateTo('panel01')"
+                 title="SIM - Voltar e defender o menino">
+            </div>
+
+            <!-- ESCOLHA: NÃO (Retângulo inferior) -->
+            <div class="mapped-area" 
+                 style="bottom: 12%; left: 5%; width: 55%; height: 2.5%;" 
+                 onclick="navigateTo('panel03')"
+                 title="NÃO - Terminar a história aqui">
+            </div>
+        </div>
+
+        <!-- PAINEL 03 - Escolha de não voltar atrás -->
+        <div id="panel03" class="panel-view">
+            <img src="03.png" alt="Painel 03: Niara guarda a lição no coração." class="w-full h-auto block">
+            
+            <!-- ESCOLHA ÚNICA: FIM -->
+            <div class="mapped-area" 
+                 style="bottom: 24%; left: 16.3%; width: 42%; height: 10.3%;" 
+                 onclick="navigateTo('credits')"
+                 title="FIM - Clique para terminar">
+            </div>
+        </div>
+
+        <!-- TELA DE CRÉDITOS FINAIS -->
+        <!-- Note que agora a classe .comic-bg está DENTRO do painel, resolvendo o bug de aparecer antes da hora -->
+        <div id="credits" class="panel-view">
+            <div class="comic-bg">
+                <div class="comic-box">
+                    <h1 class="comic-title text-4xl mb-4">UNIVERSIDADE FEDERAL DO CEARÁ</h1>
+                    <p class="text-2xl font-bold text-gray-800">Instituto UFC Virtual</p>
+                    <p class="text-xl text-gray-700">Sistemas e Mídias Digitais</p>
+                </div>
+
+                <div class="comic-box">
+                    <p class="text-2xl mb-2"><strong class="text-blue-600">Professora:</strong> Pâmela de Castro</p>
+                    <p class="text-xl mb-1 text-gray-800">Lab de Criatividade</p>
+                    <p class="text-xl text-gray-700">Concepção de Cenários e Personagens</p>
+                </div>
+
+                <div class="comic-box bg-yellow-100 border-yellow-400">
+                    <p class="text-2xl leading-relaxed">
+                        <strong>TRABALHO FINAL</strong><br> 
+                        desenvolvido no <em>Clip Studio Paint</em><br> 
+                        com a fonte <strong class="text-red-500">Lula Borges 3</strong>.
+                    </p>
+                </div>
+
+                <div class="comic-box">
+                    <h2 class="comic-title text-4xl text-blue-600 mb-2">José Manoel de Souza Costa</h2>
+                    <p class="text-3xl font-bold mt-2 text-gray-800">73018</p>
+                    <p class="text-xl mt-6 border-t-4 border-black pt-4 font-bold tracking-widest text-gray-600">FORTALEZA 2026.1</p>
+                </div>
+
+                <button class="btn-restart mt-8" onclick="navigateTo('panel00')">
+                    Ler Novamente!
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function navigateTo(targetId) {
+            const panels = document.querySelectorAll('.panel-view');
+            panels.forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
